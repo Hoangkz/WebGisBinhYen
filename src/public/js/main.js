@@ -26,9 +26,7 @@ $("#document").ready(function () {
 	console.log('tét')
 	///hien thi lop ban do len web
 	var format = "image/png";
-	var bounds = [
-	564234.25,2317503.0,564510.3125,2317932.25
-	];
+	var bounds = [564234.25,2317503.0,564510.3125,2317932.25];
 	var vung = new ol.layer.Image({
         source: new ol.source.ImageWMS({
           ratio: 1,

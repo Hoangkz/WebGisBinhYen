@@ -1,342 +1,336 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dữ liệu xã Cẩm Hoàng</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-      crossorigin="anonymous"
-    />
-    <link rel="stylesheet" href="/css/style.css" />
-    <link rel="stylesheet" href="/css/ol.css" type="text/css" />
-    <link rel="stylesheet" href="/css/ol.css.map" type="text/css" />
-  </head>
-  <body>
- 
-    <script src="/js/jquery-3.1.1.min.js" type="text/javascript"></script>
-    <script src="/js/ol.js"></script>
-    <!-- <script src="./js/ol.js.map"></script> -->
-    <script src="/js/search.js" type="text/javascript"></script>
-    <div class="main">
-      <header>Cẩm Hoàng GIS</header>
-      <div class="main-gis">
-        <div class="main__gis--left">
-          <div class="checkbox_form">
-            <label for="checkbox">Dân cư</label>
-            <input type="checkbox" name="" id="checkvung" checked />
-          </div>
-          <div class="checkbox_form">
-            <label for="checkduong">Giao thông</label>
-            <input type="checkbox" name="" id="checkduong" checked />
-          </div>
-          <div class="checkbox_form">
-            <label for="checkdiem">Cơ sở hạ tầng</label>
-            <input type="checkbox" name="" id="checkdiem" checked />
-          </div>
-          <form>
-            <input
-              class="form-control"
-              type="text"
-              size="30"
-              onkeyup="showResult(this.value)"
-              placeholder="Tìm kiếm"
-            />
-            <div id="livesearch"></div>
-          </form>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dữ liệu xã Cẩm Hoàng</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/ol.css" type="text/css" />
+  <link rel="stylesheet" href="/css/ol.css.map" type="text/css" />
+  
+</head>
+
+<body>
+
+  <script src="/js/jquery-3.1.1.min.js" type="text/javascript"></script>
+  <script src="/js/ol.js"></script>
+  <!-- <script src="./js/ol.js.map"></script> -->
+  <script src="/js/search.js" type="text/javascript"></script>
+  <div class="main">
+    <header>Cẩm Hoàng GIS</header>
+    <div class="main-gis">
+
+      <div class="main__gis--left" style="max-width: 250px;">
+        <div class="checkbox_form">
+          <label for="checkbox">Dân cư</label>
+          <input type="checkbox" name="" id="checkvung" checked />
         </div>
+        <div class="checkbox_form">
+          <label for="checkduong">Giao thông</label>
+          <input type="checkbox" name="" id="checkduong" checked />
+        </div>
+        <div class="checkbox_form">
+          <label for="checkdiem">Cơ sở hạ tầng</label>
+          <input type="checkbox" name="" id="checkdiem" checked />
+        </div>
+        <form style="margin-right: 6px;max-width: 200px;">
+          <input class="form-control" type="text" size="30" onkeyup="showResult(this.value)" placeholder="Tìm kiếm" />
+          <div id="livesearch"></div>
+        </form>
+      </div>
 
-        <div class="map" id="map"></div>
-        <div class="main__gis--right">
-          <div class="line1">
-            <h3>Điểm</h3>
-            <img
-              src="http://localhost:8088/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&STRICT=false&style=camhoang:camhoangub_1"
-              alt=""
-            />
-            <!-- Cần thay localhost: cổng của các bạn và Layer= ... -->
+      <div class="map" id="map"></div>
 
-            <!-- Link khi mở openlayer ở geoserver có đầy đủ thông tin -->
-          </div>
-          <div class="line">
-            <h3>Đường</h3>
-            <img
-              src="http://localhost:8088/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&STRICT=false&style=camhoang:camhoanggt_1"
-              alt=""
-            />
-            <!-- Cần thay localhost: cổng của các bạn và Layer= ... -->
-          </div>
-          <div class="line3">
-            <h3>Vùng</h3>
-            <img
-              src="http://localhost:8088/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&STRICT=false&style=camhoang:camhoangdc_1"
-              alt=""
-            />
-            <!-- Cần thay localhost: cổng của các bạn và Layer= ... -->
-          </div>
+      <div class="main__gis--right">
+        <div class="line1">
+          <h3>Dân cư</h3>
+          <img
+            src="http://localhost:8088/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&STRICT=false&style=camhoang:camhoang_style"
+            alt="" />
+          <!-- Cần thay localhost: cổng của các bạn và Layer= ... -->
+
+          <!-- Link khi mở openlayer ở geoserver có đầy đủ thông tin -->
+        </div>
+        <div class="line">
+          <h3 style="padding-left: 2px;padding-right: 2px;">Giao thông</h3>
+          <img
+            src="http://localhost:8088/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&STRICT=false&style=camhoang:camhoanggt_style"
+            alt="" />
+          <!-- Cần thay localhost: cổng của các bạn và Layer= ... -->
+        </div>
+        <div class="line3">
+          <h3>CSHT</h3>
+          <img
+            src="http://localhost:8088/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&STRICT=false&style=camhoang:camhoangub_style"
+            alt="" />
+          <!-- Cần thay localhost: cổng của các bạn và Layer= ... -->
         </div>
       </div>
     </div>
-    <div class="ol-popup" id="popup">
-      <a href="#" class="ol-popup-closer" id="popup-closer">
-        <div id="popup-content">
-          <!-- <div id="info"></div> -->
-        </div>
-      </a>
-    </div>
-    
+  </div>
+  <div class="ol-popup" id="popup">
+    <a href="#" class="ol-popup-closer" id="popup-closer">
+      <div id="popup-content">
+        <!-- <div id="info"></div> -->
+      </div>
+    </a>
+  </div>
 
-    
 
-    <script>
-      //5. Tao cua so hien thi thuoc tinh
-      var container = document.getElementById("popup");
-      var content = document.getElementById("popup-content");
-      var closer = document.getElementById("popup-closer");
 
-      var overlay = new ol.Overlay({
-        element: container,
-        autoPan: true,
-        autoPanAnimation: {
-          duration: 250,
+
+  <script>
+    //5. Tao cua so hien thi thuoc tinh
+    var container = document.getElementById("popup");
+    var content = document.getElementById("popup-content");
+    var closer = document.getElementById("popup-closer");
+
+    var overlay = new ol.Overlay({
+      element: container,
+      autoPan: true,
+      autoPanAnimation: {
+        duration: 250,
+      },
+    });
+
+    var shouldUpdate = true;
+    var center = [564429.04, 2317738.2];
+    var zoom = 16.56631263565161;
+    var rotation = 0;
+
+    closer.onclick = function () {
+      overlay.setPosition(undefined);
+      closer.blur();
+      return false;
+    };
+
+    ///hien thi lop ban do len web
+    var format = "image/png";
+    var bounds = [564182.125, 2317466.0, 564514.4375, 2318014.0]; //cần thay
+    // ở đường dẫn khi các bạn vào openlayer trong geoserver
+    var vung = new ol.layer.Image({
+      source: new ol.source.ImageWMS({
+        ratio: 1,
+        url: "http://localhost:8088/geoserver/camhoang/wms", //cần thay url
+        params: {
+          FORMAT: format,
+          VERSION: "1.1.0",
+          STYLES: "",
+          LAYERS: "camhoang:camhoangdc_1", //cần thay
         },
-      });
+      }),
+    });
 
-      var shouldUpdate = true;
-      var center = [564429.04, 2317738.2];
-      var zoom = 16.56631263565161;
-      var rotation = 0;
+    var duong = new ol.layer.Image({
+      source: new ol.source.ImageWMS({
+        ratio: 1,
+        url: "http://localhost:8088/geoserver/camhoang/wms", //cần thay
+        params: {
+          FORMAT: format,
+          VERSION: "1.1.0",
+          STYLES: "",
+          LAYERS: "camhoang:camhoanggt_1", //cần thay
+        },
+      }),
+    });
 
-      closer.onclick = function () {
-        overlay.setPosition(undefined);
-        closer.blur();
-        return false;
-      };
+    var diem = new ol.layer.Image({
+      source: new ol.source.ImageWMS({
+        ratio: 1,
+        url: "http://localhost:8088/geoserver/camhoang/wms", //cần thay
+        params: {
+          FORMAT: format,
+          VERSION: "1.1.0",
+          STYLES: "",
+          LAYERS: "camhoang:camhoangub_1", //cần thay
+        },
+      }),
+    });
 
-      ///hien thi lop ban do len web
-      var format = "image/png";
-      var bounds = [564182.125,2317466.0,564514.4375,2318014.0]; //cần thay
-      // ở đường dẫn khi các bạn vào openlayer trong geoserver
-      var vung = new ol.layer.Image({
-        source: new ol.source.ImageWMS({
-          ratio: 1,
-          url: "http://localhost:8088/geoserver/camhoang/wms", //cần thay url
-          params: {
-            FORMAT: format,
-            VERSION: "1.1.0",
-            STYLES: "",
-            LAYERS: "camhoang:camhoangdc_1", //cần thay
-          },
-        }),
-      });
+    var projection = new ol.proj.Projection({
+      code: "EPSG: 3405",
+      units: "m",
+      axisOrientation: "neu",
+    });
 
-      var duong = new ol.layer.Image({
-        source: new ol.source.ImageWMS({
-          ratio: 1,
-          url: "http://localhost:8088/geoserver/camhoang/wms", //cần thay
-          params: {
-            FORMAT: format,
-            VERSION: "1.1.0",
-            STYLES: "",
-            LAYERS: "camhoang:camhoanggt_1", //cần thay
-          },
-        }),
-      });
+    var view = new ol.View({
+      projection: projection,
+      center: center,
+      zoom: zoom,
+      rotation: rotation,
+    });
 
-      var diem = new ol.layer.Image({
-        source: new ol.source.ImageWMS({
-          ratio: 1,
-          url: "http://localhost:8088/geoserver/camhoang/wms", //cần thay
-          params: {
-            FORMAT: format,
-            VERSION: "1.1.0",
-            STYLES: "",
-            LAYERS: "camhoang:camhoangub_1", //cần thay
-          },
-        }),
-      });
+    var map = new ol.Map({
+      target: "map",
+      layers: [vung, duong, diem],
+      overlays: [overlay],
+      view: view,
+    });
 
-      var projection = new ol.proj.Projection({
-        code: "EPSG: 3405",
-        units: "m",
-        axisOrientation: "neu",
-      });
+    map.getView().fit(bounds, map.getSize());
 
-      var view = new ol.View({
-        projection: projection,
-        center: center,
-        zoom: zoom,
-        rotation: rotation,
-      });
+    //code tim kiem doi tuong
+    if (window.location.hash !== "") {
+      var hash = window.location.hash.replace("#map=", "");
+      var parts = hash.split("/");
 
-      var map = new ol.Map({
-        target: "map",
-        layers: [vung, duong, diem],
-        overlays: [overlay],
-        view: view,
-      });
-
-      map.getView().fit(bounds, map.getSize());
-
-      //code tim kiem doi tuong
-      if (window.location.hash !== "") {
-        var hash = window.location.hash.replace("#map=", "");
-        var parts = hash.split("/");
-
-        if (parts.length === 4) {
-          zoom = parseInt(parts[0], 10);
-          center = [parseFloat(parts[1]), parseFloat(parts[2])];
-          rotation = parseFloat(parts[3]);
-        }
+      if (parts.length === 4) {
+        zoom = parseInt(parts[0], 10);
+        center = [parseFloat(parts[1]), parseFloat(parts[2])];
+        rotation = parseFloat(parts[3]);
       }
-      // Hiển thị nổi bật đối tượng được chọn dang vùng:
-      var styles = {
-        MultiPolygon: new ol.style.Style({
-          stroke: new ol.style.Stroke({
-            color: "red",
-            width: 5,
-          }),
+    }
+    // Hiển thị nổi bật đối tượng được chọn dang vùng:
+    var styles = {
+      MultiPolygon: new ol.style.Style({
+        stroke: new ol.style.Stroke({
+          color: "red",
+          width: 5,
         }),
-      };
+      }),
+    };
 
-      var styleFunction = function (feature) {
-        return styles[feature.getGeometry().getType()];
-      };
+    var styleFunction = function (feature) {
+      return styles[feature.getGeometry().getType()];
+    };
 
-      var vectorLayer = new ol.layer.Vector({
-        style: styleFunction,
-      });
+    var vectorLayer = new ol.layer.Vector({
+      style: styleFunction,
+    });
 
-      map.addLayer(vectorLayer);
+    map.addLayer(vectorLayer);
 
-      //hieenr thij
+    //hieenr thij
 
-      // var vectorSource = new ol.source.Vector({
-      // 	features: (new ol.format.GeoJSON()).readFeatures(n)
-      // })
-      // vectorLayer.setSource(vectorSource)
+    // var vectorSource = new ol.source.Vector({
+    // 	features: (new ol.format.GeoJSON()).readFeatures(n)
+    // })
+    // vectorLayer.setSource(vectorSource)
 
-      //Lấy thông tin khi click chuột
-      map.on("singleclick", function (evt) {
-        var view = map.getView();
-        var viewResolution = view.getResolution();
-        var source = vung.getSource();
-        var url = source.getFeatureInfoUrl(
-          evt.coordinate,
-          viewResolution,
-          view.getProjection(),
-          { INFO_FORMAT: "application/json", FEATURE_COUNT: 50 }
-        );
+    //Lấy thông tin khi click chuột
+    map.on("singleclick", function (evt) {
+      var view = map.getView();
+      var viewResolution = view.getResolution();
+      var source = vung.getSource();
+      var url = source.getFeatureInfoUrl(
+        evt.coordinate,
+        viewResolution,
+        view.getProjection(),
+        { INFO_FORMAT: "application/json", FEATURE_COUNT: 50 }
+      );
 
-        if (url) {
-          $.ajax({
-            type: "POST",
-            url: url,
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (n) {
-              var content = "<table>";
-              for (var i = 0; i < n.features.length; i++) {
-                var feature = n.features[i];
-                var featureAttr = feature.properties;
-                content +=
-                  "<tr><td>Loại Đất:" +
-                  featureAttr["ma_loai"] +
-                  "</td><td> - Diện Tích:" +
-                  featureAttr["shape_area"] +
-                  "</td></tr>";
-              }
+      if (url) {
+        $.ajax({
+          type: "POST",
+          url: url,
+          contentType: "application/json; charset=utf-8",
+          dataType: "json",
+          success: function (n) {
+            var content = "<table>";
+            for (var i = 0; i < n.features.length; i++) {
+              var feature = n.features[i];
+              var featureAttr = feature.properties;
+              content +=
+                "<tr><td>Loại Đất:" +
+                featureAttr["ma_loai"] +
+                "</td><td> - Diện Tích:" +
+                featureAttr["shape_area"] +
+                "</td></tr>";
+            }
 
-              content += "</table>";
-              // $("#info").html(content);
-              // 5. Sửa lịa bài 3 thay info thành popup-content
-              $("#popup-content").html(content);
-              overlay.setPosition(evt.coordinate);
+            content += "</table>";
+            // $("#info").html(content);
+            // 5. Sửa lịa bài 3 thay info thành popup-content
+            $("#popup-content").html(content);
+            overlay.setPosition(evt.coordinate);
 
-              // 4. Hieenr thi noi bat doi tuong duocj chon dang vung: camhoangdc
-              var vectorSource = new ol.source.Vector({
-                features: new ol.format.GeoJSON().readFeatures(n),
-              });
-              vectorLayer.setSource(vectorSource);
-            },
-          });
-        }
-      });
-
-      var updatePermalink = function () {
-        if (!shouldUpdate) {
-          // do not update the url when the view was changed
-          shouldUpdate = true;
-          return;
-        }
-
-        var center = view.getCenter();
-        var hash =
-          "#map=" +
-          view.getZoom() +
-          "/" +
-          Math.round(center[0] * 100) / 100 +
-          "/" +
-          Math.round(center[1] * 100) / 100 +
-          "/" +
-          view.getRotation();
-        var state = {
-          zoom: view.getZoom(),
-          center: view.getCenter(),
-          rotation: view.getRotation(),
-        };
-
-        window.history.pushState(state, "map", hash);
-      };
-
-      map.on("moveend", updatePermalink);
-
-      window.addEventListener("popstate", function (event) {
-        if (event.state === null) {
-          return;
-        }
-
-        map.getView().setCenter(event.state.center);
-        map.getView().setZoom(event.state.zoom);
-        map.getView().setRotation(event.state.rotation);
-        shouldUpdate = false;
-      });
-
-      function di_den_diem(x, y) {
-        var vi_tri = ol.proj.fromLonLat([x, y], projection);
-        view.animate({
-          center: vi_tri,
-          duration: 2000,
-          zoom: 20,
+            // 4. Hieenr thi noi bat doi tuong duocj chon dang vung: camhoangdc
+            var vectorSource = new ol.source.Vector({
+              features: new ol.format.GeoJSON().readFeatures(n),
+            });
+            vectorLayer.setSource(vectorSource);
+          },
         });
       }
+    });
 
-      ///taoj check box
-      $("#checkvung").change(function () {
-        if ($("#checkvung").is(":checked")) {
-          vung.setVisible(true);
-        } else {
-          vung.setVisible(false);
-        }
-      });
+    var updatePermalink = function () {
+      if (!shouldUpdate) {
+        // do not update the url when the view was changed
+        shouldUpdate = true;
+        return;
+      }
 
-      $("#checkduong").change(function () {
-        if ($("#checkduong").is(":checked")) {
-          duong.setVisible(true);
-        } else {
-          duong.setVisible(false);
-        }
-      });
+      var center = view.getCenter();
+      var hash =
+        "#map=" +
+        view.getZoom() +
+        "/" +
+        Math.round(center[0] * 100) / 100 +
+        "/" +
+        Math.round(center[1] * 100) / 100 +
+        "/" +
+        view.getRotation();
+      var state = {
+        zoom: view.getZoom(),
+        center: view.getCenter(),
+        rotation: view.getRotation(),
+      };
 
-      $("#checkdiem").change(function () {
-        if ($("#checkdiem").is(":checked")) {
-          diem.setVisible(true);
-        } else {
-          diem.setVisible(false);
-        }
+      window.history.pushState(state, "map", hash);
+    };
+
+    map.on("moveend", updatePermalink);
+
+    window.addEventListener("popstate", function (event) {
+      if (event.state === null) {
+        return;
+      }
+
+      map.getView().setCenter(event.state.center);
+      map.getView().setZoom(event.state.zoom);
+      map.getView().setRotation(event.state.rotation);
+      shouldUpdate = false;
+    });
+
+    function di_den_diem(x, y) {
+      var vi_tri = ol.proj.fromLonLat([x, y], projection);
+      view.animate({
+        center: vi_tri,
+        duration: 2000,
+        zoom: 20,
       });
-    </script>
-  </body>
+    }
+
+    ///taoj check box
+    $("#checkvung").change(function () {
+      if ($("#checkvung").is(":checked")) {
+        vung.setVisible(true);
+      } else {
+        vung.setVisible(false);
+      }
+    });
+
+    $("#checkduong").change(function () {
+      if ($("#checkduong").is(":checked")) {
+        duong.setVisible(true);
+      } else {
+        duong.setVisible(false);
+      }
+    });
+
+    $("#checkdiem").change(function () {
+      if ($("#checkdiem").is(":checked")) {
+        diem.setVisible(true);
+      } else {
+        diem.setVisible(false);
+      }
+    });
+  </script>
+  
+</body>
+
 </html>
