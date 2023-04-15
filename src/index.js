@@ -95,6 +95,7 @@ app.get("/api/search", (req, res) =>{
 
 
 app.get("/", (req, res) =>res.render('home'))
+app.get("/test", (req, res) =>res.render('test2',{layout:false}))
 
 
 

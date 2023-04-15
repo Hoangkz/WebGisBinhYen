@@ -23,7 +23,7 @@
       display: none;
     }
   </style>
-
+  
 </head>
 
 <body>
@@ -32,7 +32,20 @@
   <div class="main">
     <header>Cẩm Hoàng GIS</header>
     <div class="main-gis">
+
       <div class="main__gis--left" style="max-width: 250px; justify-content: start;">
+        {{!-- <div class="checkbox_form">
+          <label for="checkbox">Vùng</label>
+          <input type="checkbox" name="" id="checkvung" checked />
+        </div>
+        <div class="checkbox_form">
+          <label for="checkdiem">Uỷ ban</label>
+          <input type="checkbox" name="" id="checkdiem" checked />
+        </div>
+        <div class="checkbox_form">
+          <label for="checkduong">Giao thông</label>
+          <input type="checkbox" name="" id="checkduong" checked />
+        </div> --}}
         <form style="margin-right: 6px;max-width: 240px;">
           <label for="inputsearch" style="margin-top: 8px;">Nhập mã hoặc tên chủ đất</label>
           <input id="inputsearch" class="form-control" style="margin-top: 2px;" type="text" size="30"
@@ -67,28 +80,28 @@
             <!-- Cần thay localhost: cổng của các bạn và Layer= ... -->
           </div>
         </div>
-        <div class="ol-popup hide" id="popup" style="position: absolute;top: 10%;left: 5%;">
-          <a href="#" class="ol-popup-closer" id="popup-closer">
-            <div id="popup-content">
-            </div>
-          </a>
-        </div>
       </div>
 
     </div>
   </div>
-
+  <div class="ol-popup" id="popup">
+    <a href="#" class="ol-popup-closer" id="popup-closer">
+      <div id="popup-content">
+        <!-- <div id="info"></div> -->
+      </div>
+    </a>
+  </div>
 
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
   <script src="/js/ol.js"></script>
-  
+  <!-- <script src="./js/ol.js.map"></script> -->
   <script src="/js/rawgis.js"></script>
   <script src="/js/search.js" type="text/javascript"></script>
   <script>
     const mapContainer = document.querySelector('#map');
-    mapContainer.style.setProperty("--height-map", `${window.innerHeight - 60}px`);
+    mapContainer.style.setProperty("--height-map", `${window.innerHeight-60}px`);
   </script>
   <script>
     //5. Tao cua so hien thi thuoc tinh
@@ -97,27 +110,23 @@
     var closer = document.getElementById("popup-closer");
 
     var overlay = new ol.Overlay({
+      element: container,
       autoPan: true,
       autoPanAnimation: {
         duration: 250,
       },
     });
-    
-    const toggle_ol_popup  = (e)=>{
-      const popup = document.querySelector('#popup');
-      if(e){
-        popup.classList.remove('hide');
-      }
-      else{
-        popup.classList.add('hide');
-      }
-    }
+
     var shouldUpdate = true;
-    var center = [564350.04, 2317738.2];
-    var zoom = 17.4;
+    var center = [564429.04, 2317738.2];
+    var zoom = 16.56631263565161;
     var rotation = 0;
 
-
+    closer.onclick = function () {
+      overlay.setPosition(undefined);
+      closer.blur();
+      return false;
+    };
 
     ///hien thi lop ban do len web
     var format = "image/png";
@@ -176,6 +185,15 @@
       zoom: zoom,
       rotation: rotation,
     });
+    /*
+    var map = new ol.Map({
+      target: "map",
+      layers: [vung, duong, diem],
+      overlays: [overlay],
+      view: view,
+    });
+    map.getView().fit(bounds, map.getSize());
+    */
 
     var osm = new ol.layer.Tile({
       title: 'OpenStreetMap',
@@ -230,15 +248,17 @@
           layers: [vung, duong, diem]
         }),
       ],
-      overlay: overlay,
-      view: view,
+      view: new ol.View({
+        center: ol.proj.fromLonLat([105.621, 20.958]),
+        zoom: 16.8,
+      }),
       controls: ol.control.defaults().extend([
         new ol.control.ScaleLine(),
         new ol.control.FullScreen(),
         new ol.control.OverviewMap({ layers: [googleLayerSatellite, bingAerialWithLabels, bingAerial, bingRoads, osm] }),
         new ol.control.MousePosition({
           coordinateFormat: ol.coordinate.createStringXY(3),
-          projection: projection
+          projection: 'EPSG:4326'
         })
       ])
     });
@@ -278,18 +298,23 @@
 
     map.addLayer(vectorLayer);
 
+    //hieenr thij
 
+    // var vectorSource = new ol.source.Vector({
+    // 	features: (new ol.format.GeoJSON()).readFeatures(n)
+    // })
+    // vectorLayer.setSource(vectorSource)
 
     //Lấy thông tin khi click chuột
     map.on("singleclick", function (evt) {
 
-      const viewr = map.getView();
-      const viewResolution = viewr.getResolution();
-      const source = vung.getSource();
-      const url = source.getFeatureInfoUrl(
+      var view = map.getView();
+      var viewResolution = view.getResolution();
+      var source = vung.getSource();
+      var url = source.getFeatureInfoUrl(
         evt.coordinate,
         viewResolution,
-        viewr.getProjection(),
+        view.getProjection(),
         { INFO_FORMAT: "application/json", FEATURE_COUNT: 50 }
       );
 
@@ -301,33 +326,27 @@
           dataType: "json",
           success: function (response) {
             const data = response.features[0]?.properties
-            if (data) {
-              const content = `<p>
-                                  Mã vùng: ${data.txtmemo} </br> 
-                                  Diện tích: ${parseFloat(data.shape_area).toFixed(2)}m\u00B2 </br>
-                                  Chủ sở hữu: ${data.chusd}
-                                </p>`
+            console.log(data)
+            const content = `<p>
+                                Mã vùng: ${data.txtmemo} </br> 
+                                Diện tích: ${parseFloat(data.shape_area).toFixed(2)}m\u00B2 </br>
+                                Chủ sở hữu: ${data.chusd}
+                              </p>`
 
-              $("#popup-content").html(content);
-              overlay.setPosition(evt.coordinate);
-              toggle_ol_popup(true);
-              // 4. Hieenr thi noi bat doi tuong duocj chon dang vung: camhoangdc
-              const vectorSource = new ol.source.Vector({
-                features: new ol.format.GeoJSON().readFeatures(response),
-              });
-              vectorLayer.setSource(vectorSource);
-            }
-            else {
-              vectorLayer.setSource(undefined);
-              toggle_ol_popup(false);
-            }
+            $("#popup-content").html(content);
+            overlay.setPosition(evt.coordinate);
+
+            // 4. Hieenr thi noi bat doi tuong duocj chon dang vung: camhoangdc
+            var vectorSource = new ol.source.Vector({
+              features: new ol.format.GeoJSON().readFeatures(response),
+            });
+            vectorLayer.setSource(vectorSource);
           },
           error: (err) => {
-            toggle_ol_popup(false);
+            console.log("vào err")
           }
         });
       }
-
     });
 
     var updatePermalink = function () {
@@ -370,64 +389,38 @@
     });
 
     function di_den_diem(x, y) {
-      toggle_ol_popup(false);
-      const taodo = [parseFloat(x), parseFloat(y)]
-
-      setTimeout(() => {
-        const viewr = map.getView();
-        const viewResolution = viewr.getResolution();
-        const source = vung.getSource();
-        const url = source.getFeatureInfoUrl(
-          taodo,
-          viewResolution,
-          viewr.getProjection(),
-          { INFO_FORMAT: "application/json", FEATURE_COUNT: 50 }
-        );
-        if (url) {
-          $.ajax({
-            type: "POST",
-            url: url,
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (response) {
-              const data = response.features[0]?.properties
-              console.log(data)
-              const content = `<p>
-                                Mã vùng: ${data.txtmemo} </br> 
-                                Diện tích: ${parseFloat(data.shape_area).toFixed(2)}m\u00B2 </br>
-                                Chủ sở hữu: ${data.chusd}
-                              </p>`
-
-              $("#popup-content").html(content);
-              toggle_ol_popup(true);
-              // 4. Hieenr thi noi bat doi tuong duocj chon dang vung: camhoangdc
-              const vectorSource = new ol.source.Vector({
-                features: new ol.format.GeoJSON().readFeatures(response),
-              });
-              vectorLayer.setSource(vectorSource);
-
-            },
-            error: (err) => {
-              toggle_ol_popup(false);
-            }
-          });
-        }
-      }, 1000)
-      overlay.setPosition(taodo);
-      const vi_tri = ol.proj.fromLonLat(taodo, projection);
+      var vi_tri = ol.proj.fromLonLat([x, y], projection);
       view.animate({
         center: vi_tri,
-        duration: 900,
+        duration: 2000,
         zoom: 20,
       });
-
-
-
-
-
-
     }
 
+    ///taoj check box
+    $("#checkvung").change(function () {
+      if ($("#checkvung").is(":checked")) {
+        vung.setVisible(true);
+      } else {
+        vung.setVisible(false);
+      }
+    });
+
+    $("#checkduong").change(function () {
+      if ($("#checkduong").is(":checked")) {
+        duong.setVisible(true);
+      } else {
+        duong.setVisible(false);
+      }
+    });
+
+    $("#checkdiem").change(function () {
+      if ($("#checkdiem").is(":checked")) {
+        diem.setVisible(true);
+      } else {
+        diem.setVisible(false);
+      }
+    });
 
   </script>
   <script>
