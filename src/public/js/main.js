@@ -170,6 +170,9 @@ $("#document").ready(function () {
 					})
 					vectorLayer.setSource(vectorSource)
 
+				},
+				error:()=>{
+					console.log("vào day")
 				}
 			})
 		}

@@ -58,15 +58,27 @@ app.use(express.json());
 
 app.get("/api/search", (req, res) =>{
   try {
-    const name = req.query.name
-    console.log(name)
+    const name = req.query.name.toLowerCase()
+    const name2 = req.query.name.toLowerCase()
     if(name){
-      const query = `select *,st_x(ST_Centroid(geom)) as x,st_y(ST_Centroid(geom)) as y from camhoangdc_1 where LOWER(txtmemo) like '${name}'`;
-    
-      client.query(query, (err, respons) => {
+      const query = `SELECT *, ST_X(ST_Centroid(geom)) as x, ST_Y(ST_Centroid(geom)) as y 
+               FROM camhoangdc_1 
+               WHERE LOWER(txtmemo) LIKE '%${name}%' 
+                     OR 
+                     LOWER(chusd) LIKE '%${name2}%'`;
+
+      client.query(query, (err, response) => {
         if (err) throw err;
+
+        const data = response?.rows?.map(row => ({
+          ma_memo: row.txtmemo,
+          name: row.chusd,
+          shape_area: row.shape_area,
+          x: row.x,
+          y: row.y,
+      }));
         res.status(200).json({
-          data:respons,
+          data:data,
           message:"Lấy dữ liệu thành công"
         })
       });
@@ -83,6 +95,7 @@ app.get("/api/search", (req, res) =>{
 
 
 app.get("/", (req, res) =>res.render('home'))
+
 
 
 
