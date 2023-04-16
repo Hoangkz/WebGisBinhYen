@@ -72,17 +72,17 @@
             <!-- Cần thay localhost: cổng của các bạn và Layer= ... -->
           </div>
         </div>
-        <div class="ol-popup hide" id="popup">
-          <a href="#" class="ol-popup-closer" id="popup-closer">
-            <div id="popup-content">
-            </div>
-          </a>
-        </div>
+
       </div>
 
     </div>
   </div>
-
+  <div class="ol-popup hide" id="popup">
+    <a href="#" class="ol-popup-closer" id="popup-closer">
+      <div id="popup-content">
+      </div>
+    </a>
+  </div>
 
   <script src="/libs/v6.9.0/build/ol.js"></script>
   <script src="/js/rawgis.js"></script>
@@ -105,13 +105,19 @@
   </script>
 
   <script>
-
+    var container = document.getElementById("popup");
+    var content = document.getElementById("popup-content");
+    var closer = document.getElementById("popup-closer");
     var shouldUpdate = true;
     var center = [564350.04, 2317738.2];
     var zoom = 17.4;
     var rotation = 0;
 
-
+    closer.onclick = function () {
+      overlay.setPosition(undefined);
+      closer.blur();
+      return false;
+    };
 
     ///hien thi lop ban do len web
     var format = "image/png";
@@ -239,7 +245,6 @@
         new ol.layer.Group({
           title: 'Bản đồ nền',
           layers: [googleLayerSatellite, bingAerialWithLabels, bingAerial, bingRoads, osm],
-          view: view
         }),
         new ol.layer.Group({
           title: 'Dữ liệu địa lý',
@@ -250,10 +255,7 @@
           })
         })
       ],
-      view: new ol.View({
-        center: ol.proj.fromLonLat([105.621, 20.958]),
-        zoom: 17
-      }),
+      view: view,
       controls: ol.control.defaults().extend([
         new ol.control.ScaleLine(),
         new ol.control.FullScreen(),
@@ -407,19 +409,17 @@
     function di_den_diem(x, y, xtb, ytb) {
       toggle_ol_popup(false);
       const taodo = [parseFloat(xtb), parseFloat(ytb)]
-      console.log(taodo);
       setTimeout(() => {
         const viewr = map.getView();
         const viewResolution = viewr.getResolution();
         const source = vung.getSource();
-        let url = source.getFeatureInfoUrl(
+        const url = source.getFeatureInfoUrl(
           taodo,
           viewResolution,
           viewr.getProjection(),
           { INFO_FORMAT: "application/json", FEATURE_COUNT: 50 }
         );
-        console.log(url);
-        url = url.replace('EPSG%3A3857', 'EPSG%3A3405')
+        console.log(url)
         if (url) {
           $.ajax({
             type: "POST",
@@ -428,44 +428,35 @@
             dataType: "json",
             success: function (response) {
               const data = response.features[0]?.properties
-              if (data) {
-                var bbox = url.split("Bbox");
+              console.log(data)
+              const content = `<p>
+                                Mã vùng: ${data.txtmemo} </br> 
+                                Diện tích: ${parseFloat(data.shape_area).toFixed(2)}m\u00B2 </br>
+                                Chủ sở hữu: ${data.chusd}
+                              </p>`
 
-                const content = `<p>
-                                    Mã vùng: ${data.txtmemo} </br> 
-                                    Diện tích: ${parseFloat(data.shape_area).toFixed(2)}m\u00B2 </br>
-                                    Chủ sở hữu: ${data.chusd}
-                                  </p>`
+              $("#popup-content").html(content);
+              toggle_ol_popup(true);
+              // 4. Hieenr thi noi bat doi tuong duocj chon dang vung: camhoangdc
+              const vectorSource = new ol.source.Vector({
+                features: new ol.format.GeoJSON().readFeatures(response),
+              });
+              vectorLayer.setSource(vectorSource);
 
-                $("#popup-content").html(content);
-                toggle_ol_popup(true);
-                const vectorSource = new ol.source.Vector({
-                  features: new ol.format.GeoJSON().readFeatures(response),
-                });
-                vectorLayer.setSource(vectorSource);
-
-              }
-              else {
-                vectorLayer.setSource(undefined);
-                toggle_ol_popup(false);
-              }
             },
             error: (err) => {
               toggle_ol_popup(false);
             }
           });
         }
-
       }, 1000)
-
-      /*
       overlay.setPosition(taodo);
       const vi_tri = ol.proj.fromLonLat(taodo, projection);
       view.animate({
         center: vi_tri,
         duration: 900,
         zoom: 20,
-      });*/
+      });
     }
 
 

@@ -120,12 +120,44 @@ h3 {
   border: 1px solid #ccc;
   bottom: 12px;
   height: 100px;
+  position: relative;
+    top: -128px;
+    right: 44px;
 }
 
 
-.ol-popup-closer {
-  text-decoration: none;
+.ol-popup::after,
+.ol-popup::before {
+  top: 100%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
 }
+
+.ol-popup::after {
+  border-top-color: white;
+  border-width: 10px;
+  left: 48px;
+  margin-left: -10px;
+}
+
+.ol-popup-closer::after {
+  content: "x";
+  position: absolute!important;
+  top: 0!important;
+  right: 13px!important;
+}
+
+.ol-popup-closer::before {
+  display: none;
+}
+.ol-popup-closer::after {
+  content: "x";
+}
+
 
 
 .muiten {
