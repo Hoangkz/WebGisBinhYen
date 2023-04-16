@@ -72,7 +72,7 @@
             <!-- Cần thay localhost: cổng của các bạn và Layer= ... -->
           </div>
         </div>
-        <div class="ol-popup hide" id="popup">
+        <div class="ol-popup hide" id="popup" style="position: absolute;top: 10%;left: 10%;">
           <a href="#" class="ol-popup-closer" id="popup-closer">
             <div id="popup-content">
             </div>
@@ -238,16 +238,11 @@
       layers: [
         new ol.layer.Group({
           title: 'Bản đồ nền',
-          layers: [googleLayerSatellite, bingAerialWithLabels, bingAerial, bingRoads, osm],
-          view: view
+          layers: [googleLayerSatellite, bingAerialWithLabels, bingAerial, bingRoads, osm]
         }),
         new ol.layer.Group({
           title: 'Dữ liệu địa lý',
-          layers: [vung, duong, diem],
-          view: new ol.View({
-            center: ol.proj.fromLonLat([105.621, 20.958]),
-            zoom: 17
-          })
+          layers: [vung, duong, diem]
         })
       ],
       view: new ol.View({
@@ -260,7 +255,7 @@
         new ol.control.OverviewMap({ layers: [googleLayerSatellite, bingAerialWithLabels, bingAerial, bingRoads, osm] }),
         new ol.control.MousePosition({
           coordinateFormat: ol.coordinate.createStringXY(3),
-          projection: projection
+          projection: 'EPSG:3405'
         })
       ])
     });
@@ -270,7 +265,16 @@
     map.addControl(layerSwitcher);
 
     // Add popup
+    var elementPopup = document.getElementById('popup');
+    const popup = new ol.Overlay({
+      element: elementPopup,
+      autoPan: true,
+      autoPanAnimation: {
+        duration: 250,
+      },
+    });
 
+    var element = popup.getElement();
 
     var overlay = new ol.Overlay({
       element: document.getElementById('popup'),
@@ -279,9 +283,7 @@
         duration: 250,
       },
     });
-    const element = overlay.getElement();
-
-    map.addOverlay(overlay);
+    map.addOverlay(popup);
 
     //code tim kiem doi tuong
     if (window.location.hash !== "") {
@@ -325,9 +327,6 @@
         viewr.getProjection(),
         { INFO_FORMAT: "application/json", FEATURE_COUNT: 50 }
       );
-      console.log(viewr)
-      console.log(viewResolution)
-      console.log(url)
       if (url) {
         $.ajax({
           type: "POST",
@@ -345,7 +344,8 @@
                                 </p>`
 
               $("#popup-content").html(content);
-              overlay.setPosition(evt.coordinate);
+              console.log(evt.coordinate)
+              popup.setPosition(evt.coordinate);
               toggle_ol_popup(true);
               // 4. Hieenr thi noi bat doi tuong duocj chon dang vung: camhoangdc
               const vectorSource = new ol.source.Vector({
@@ -404,68 +404,57 @@
       map.getView().setRotation(event.state.rotation);
       shouldUpdate = false;
     });
-    function di_den_diem(x, y, xtb, ytb) {
+    function di_den_diem(x, y, xmax, ymax, xmin, ymin) {
       toggle_ol_popup(false);
-      const taodo = [parseFloat(xtb), parseFloat(ytb)]
-      console.log(taodo);
-      setTimeout(() => {
-        const viewr = map.getView();
-        const viewResolution = viewr.getResolution();
-        const source = vung.getSource();
-        let url = source.getFeatureInfoUrl(
-          taodo,
-          viewResolution,
-          viewr.getProjection(),
-          { INFO_FORMAT: "application/json", FEATURE_COUNT: 50 }
-        );
-        console.log(url);
-        url = url.replace('EPSG%3A3857', 'EPSG%3A3405')
-        if (url) {
-          $.ajax({
-            type: "POST",
-            url: url,
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (response) {
-              const data = response.features[0]?.properties
-              if (data) {
-                var bbox = url.split("Bbox");
+      const taodo = [parseFloat(xmin), parseFloat(ymin), parseFloat(xmax), parseFloat(ymax)]
 
-                const content = `<p>
-                                    Mã vùng: ${data.txtmemo} </br> 
-                                    Diện tích: ${parseFloat(data.shape_area).toFixed(2)}m\u00B2 </br>
-                                    Chủ sở hữu: ${data.chusd}
-                                  </p>`
+      const bbox = `${taodo[0]},${taodo[1]},${taodo[2]},${taodo[3]}`
 
-                $("#popup-content").html(content);
-                toggle_ol_popup(true);
-                const vectorSource = new ol.source.Vector({
-                  features: new ol.format.GeoJSON().readFeatures(response),
-                });
-                vectorLayer.setSource(vectorSource);
+      // Tính toán và gán giá trị cho biến bbox
+      // ...
+      const url = `http://localhost:8088/geoserver/camhoang/wms?SERVICE=WMS&VERSION=1.1.0&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=camhoang%3Acamhoangdc_1&STYLES=&LAYERS=camhoang%3Acamhoangdc_1&INFO_FORMAT=application%2Fjson&FEATURE_COUNT=50&X=50&Y=50&SRS=EPSG%3A%203405&WIDTH=101&HEIGHT=101&BBOX=${bbox}`;
+      $.ajax({
+        type: "POST",
+        url: url,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (response) {
+          const data = response.features[0]?.properties
+          console.log(data)
+          if (data) {
+            const content = `<p>
+                                  Mã vùng: ${data.txtmemo} </br> 
+                                  Diện tích: ${parseFloat(data.shape_area).toFixed(2)}m\u00B2 </br>
+                                  Chủ sở hữu: ${data.chusd}
+                                </p>`
 
-              }
-              else {
-                vectorLayer.setSource(undefined);
-                toggle_ol_popup(false);
-              }
-            },
-            error: (err) => {
-              toggle_ol_popup(false);
-            }
-          });
+            $("#popup-content").html(content);
+            overlay.setPosition(evt.coordinate);
+            toggle_ol_popup(true);
+            // 4. Hieenr thi noi bat doi tuong duocj chon dang vung: camhoangdc
+            const vectorSource = new ol.source.Vector({
+              features: new ol.format.GeoJSON().readFeatures(response),
+            });
+            vectorLayer.setSource(vectorSource);
+          }
+          else {
+            vectorLayer.setSource(undefined);
+            toggle_ol_popup(false);
+          }
+        },
+        error: (err) => {
+          console.error(err);
+          toggle_ol_popup(false);
         }
+      });
 
-      }, 1000)
-
-      /*
       overlay.setPosition(taodo);
       const vi_tri = ol.proj.fromLonLat(taodo, projection);
       view.animate({
         center: vi_tri,
         duration: 900,
         zoom: 20,
-      });*/
+      });
     }
 
 

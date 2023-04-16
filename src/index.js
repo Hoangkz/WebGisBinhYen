@@ -61,7 +61,7 @@ app.get("/api/search", (req, res) =>{
     const name = req.query.name.toLowerCase()
     const name2 = req.query.name.toLowerCase()
     if(name){
-      const query = `SELECT *, ST_X(ST_Centroid(geom)) as x, ST_Y(ST_Centroid(geom)) as y 
+      const query = `SELECT *, ST_X(ST_Centroid(geom)) as x, ST_Y(ST_Centroid(geom)) as y,(ST_XMin(ST_Envelope(geom))+ST_XMax(ST_Envelope(geom)))/2 as xtb, (ST_YMin(ST_Envelope(geom))+ST_YMax(ST_Envelope(geom)))/2 as ytb  
                FROM camhoangdc_1 
                WHERE LOWER(txtmemo) LIKE '%${name}%' 
                      OR 
@@ -69,13 +69,14 @@ app.get("/api/search", (req, res) =>{
 
       client.query(query, (err, response) => {
         if (err) throw err;
-
         const data = response?.rows?.map(row => ({
           ma_memo: row.txtmemo,
           name: row.chusd,
           shape_area: row.shape_area,
           x: row.x,
           y: row.y,
+          xtb: row.xtb,
+          ytb: row.ytb
       }));
         res.status(200).json({
           data:data,
@@ -95,7 +96,8 @@ app.get("/api/search", (req, res) =>{
 
 
 app.get("/", (req, res) =>res.render('home'))
-app.get("/test", (req, res) =>res.render('test2',{layout:false}))
+app.get("/test2", (req, res) =>res.render('test4',{layout:false}))
+app.get("/test", (req, res) =>res.render('test3',{layout:false}))
 
 
 
