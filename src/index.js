@@ -58,16 +58,15 @@ app.use(express.json());
 
 app.get("/api/search", (req, res) =>{
   try {
-    const name = req.query.name.toLowerCase()
-    const name2 = req.query.name.toLowerCase()
+    const name = req.query.name.toLowerCase().trim()
     if(name){
-      const query = `SELECT *, ST_X(ST_Centroid(geom)) as x, ST_Y(ST_Centroid(geom)) as y,(ST_XMin(ST_Envelope(geom))+ST_XMax(ST_Envelope(geom)))/2 as xtb, (ST_YMin(ST_Envelope(geom))+ST_YMax(ST_Envelope(geom)))/2 as ytb  
-               FROM camhoangdc_1 
-               WHERE LOWER(txtmemo) LIKE '%${name}%' 
-                     OR 
-                     LOWER(chusd) LIKE '%${name2}%'`;
-
-      client.query(query, (err, response) => {
+      const query = process.env.QUERY;
+      const where_length = process.env.WHERE_LENGTH
+      let arrWhere = [];
+      for(let i = 0; i < where_length; i++){
+        arrWhere.push(`%${name}%`)
+      }
+      client.query(query,arrWhere, (err, response) => {
         if (err) throw err;
         const data = response?.rows?.map(row => ({
           ma_memo: row.txtmemo,
@@ -95,9 +94,20 @@ app.get("/api/search", (req, res) =>{
 })
 
 
-app.get("/", (req, res) =>res.render('home'))
-app.get("/test2", (req, res) =>res.render('test4',{layout:false}))
-app.get("/test", (req, res) =>res.render('test',{layout:false}))
+app.get("/", (req, res) =>res.render('home',{
+  url:process.env.URL,
+  layerDC:process.env.LAYERS_DC,
+  layerUB:process.env.LAYERS_UB,
+  layerGT:process.env.LAYERS_GT,
+  desc_DC:process.env.DESC_DC,
+  desc_GT:process.env.DESC_GT,
+  desc_UB:process.env.DESC_UB,
+  headers:process.env.HEADER,
+  desc1:process.env.DESC1,
+  desc2:process.env.DESC2,
+  desc3:process.env.DESC3,
+}))
+
 
 
 

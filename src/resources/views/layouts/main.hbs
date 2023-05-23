@@ -31,11 +31,11 @@
 
 </head>
 
-<body>
+<body id="body" data-url="{{url}}" data-layer-DC="{{layerDC}}" data-layer-UB="{{layerUB}}" data-layer-GT="{{layerGT}}">
 
 
   <div class="main">
-    <header>Cẩm Hoàng GIS</header>
+    <header>{{headers}}</header>
     <div class="main-gis">
       <div class="main__gis--left" style="max-width: 250px; justify-content: start;">
         <form style="margin-right: 6px;max-width: 240px;">
@@ -49,25 +49,25 @@
         <div class="map" id="map"></div>
         <div class="main__gis--right" style="position: absolute;bottom: 0;">
           <div class="line1">
-            <h3>Vùng</h3>
+            <h3>{{desc1}}</h3>
             <img
-              src="http://localhost:8088/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&STRICT=false&style=camhoang:camhoang_style"
+              src="{{desc_DC}}"
               alt="" />
             <!-- Cần thay localhost: cổng của các bạn và Layer= ... -->
 
             <!-- Link khi mở openlayer ở geoserver có đầy đủ thông tin -->
           </div>
           <div class="line">
-            <h3>GT</h3>
+            <h3>{{desc2}}</h3>
             <img
-              src="http://localhost:8088/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&STRICT=false&style=camhoang:camhoanggt_style"
+              src="{{desc_GT}}"
               alt="" />
             <!-- Cần thay localhost: cổng của các bạn và Layer= ... -->
           </div>
           <div class="line3">
-            <h3>Uỷ ban</h3>
+            <h3>{{desc3}}</h3>
             <img
-              src="http://localhost:8088/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&STRICT=false&style=camhoang:camhoangub_style"
+              src="{{desc_UB}}"
               alt="" />
             <!-- Cần thay localhost: cổng của các bạn và Layer= ... -->
           </div>
@@ -105,6 +105,12 @@
   </script>
 
   <script>
+    const body = $("#body") 
+    const url_Env = body.attr("data-url")
+    const layer_DC = body.attr("data-layer-DC")
+    const layer_GT = body.attr("data-layer-GT")
+    const layer_UB = body.attr("data-layer-UB")
+
     var container = document.getElementById("popup");
     var content = document.getElementById("popup-content");
     var closer = document.getElementById("popup-closer");
@@ -188,12 +194,12 @@
       title: 'Địa giới hành chính xã Cẩm Hoàng',
       source: new ol.source.ImageWMS({
         ratio: 1,
-        url: "http://localhost:8088/geoserver/camhoang/wms", //cần thay url
+        url: url_Env, //cần thay url
         params: {
           FORMAT: format,
           VERSION: "1.1.0",
           STYLES: "",
-          LAYERS: "camhoang:camhoangdc_1", //cần thay
+          LAYERS: layer_DC, //cần thay
         },
       }),
     });
@@ -201,12 +207,12 @@
       title: 'Hệ thống giao thông xã Cẩm Hoàng',
       source: new ol.source.ImageWMS({
         ratio: 1,
-        url: "http://localhost:8088/geoserver/camhoang/wms", //cần thay
+        url: url_Env, //cần thay
         params: {
           FORMAT: format,
           VERSION: "1.1.0",
           STYLES: "",
-          LAYERS: "camhoang:camhoanggt_1", //cần thay
+          LAYERS: layer_GT, //cần thay
         },
       }),
     });
@@ -214,12 +220,12 @@
       title: 'Hệ thống uỷ ban xã Cẩm Hoàng',
       source: new ol.source.ImageWMS({
         ratio: 1,
-        url: "http://localhost:8088/geoserver/camhoang/wms", //cần thay
+        url: url_Env, //cần thay
         params: {
           FORMAT: format,
           VERSION: "1.1.0",
           STYLES: "",
-          LAYERS: "camhoang:camhoangub_1", //cần thay
+          LAYERS: layer_UB, //cần thay
         },
       }),
     });
