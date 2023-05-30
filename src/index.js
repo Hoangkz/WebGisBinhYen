@@ -106,6 +106,7 @@ app.get("/", (req, res) =>res.render('home',{
   desc1:process.env.DESC1,
   desc2:process.env.DESC2,
   desc3:process.env.DESC3,
+  data_geography:process.env.DATA_GEOGRAPHY
 }))
 
 

@@ -31,8 +31,7 @@
 
 </head>
 
-<body id="body" data-url="{{url}}" data-layer-DC="{{layerDC}}" data-layer-UB="{{layerUB}}" data-layer-GT="{{layerGT}}">
-
+<body id="body" data-url="{{url}}" data-layer-DC="{{layerDC}}" data-layer-UB="{{layerUB}}" data-layer-GT="{{layerGT}}"data-geography="{{data_geography}}">
 
   <div class="main">
     <header>{{headers}}</header>
@@ -110,6 +109,9 @@
     const layer_DC = body.attr("data-layer-DC")
     const layer_GT = body.attr("data-layer-GT")
     const layer_UB = body.attr("data-layer-UB")
+
+    const data_geography = body.attr("data-geography")
+    const data_geo = data_geography.split(",")
 
     var container = document.getElementById("popup");
     var content = document.getElementById("popup-content");
@@ -191,7 +193,7 @@
     var geojsonFormat = new ol.format.GeoJSON();
 
     var vung = new ol.layer.Image({
-      title: 'Địa giới hành chính xã Cẩm Hoàng',
+      title: data_geo[0],
       source: new ol.source.ImageWMS({
         ratio: 1,
         url: url_Env, //cần thay url
@@ -204,7 +206,7 @@
       }),
     });
     var duong = new ol.layer.Image({
-      title: 'Hệ thống giao thông xã Cẩm Hoàng',
+      title: data_geo[1],
       source: new ol.source.ImageWMS({
         ratio: 1,
         url: url_Env, //cần thay
@@ -217,7 +219,7 @@
       }),
     });
     var diem = new ol.layer.Image({
-      title: 'Hệ thống uỷ ban xã Cẩm Hoàng',
+      title: data_geo[2],
       source: new ol.source.ImageWMS({
         ratio: 1,
         url: url_Env, //cần thay
@@ -479,5 +481,4 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
-
 </html>
