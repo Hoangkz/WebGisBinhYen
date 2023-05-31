@@ -18,9 +18,6 @@ function showResult(str) {
                         Mã đất: ${item.ma_memo}
                     </p>
                     <p style="margin:2px 4px">
-                        Tên chủ đất: ${item.name}
-                    </p>
-                    <p style="margin:2px 4px">
                         Diện tích: ${parseFloat(item?.shape_area).toFixed(2)}m\u00B2
                     </p>
                     <a href='javascript:void(0);'style="margin:2px 4px" onclick='di_den_diem(${item.x},${item.y},${item.xtb},${item.ytb},${item.xmin},${item.ymin})'>Xem ngay</a>

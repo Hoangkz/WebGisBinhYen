@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-require("dotenv").config();
+require("dotenv").config(); 
 
 const port = process.env.PORT||8001
 
@@ -106,7 +106,10 @@ app.get("/", (req, res) =>res.render('home',{
   desc1:process.env.DESC1,
   desc2:process.env.DESC2,
   desc3:process.env.DESC3,
-  data_geography:process.env.DATA_GEOGRAPHY
+  data_geography:process.env.DATA_GEOGRAPHY,
+  center:process.env.CENTER,
+  zoom:process.env.ZOOM,
+  xa:process.env.DATA_XA
 }))
 
 

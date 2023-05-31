@@ -23,7 +23,6 @@ $("#document").ready(function () {
 		return false;
 	}
 	
-	console.log('tét')
 	///hien thi lop ban do len web
 	var format = "image/png";
 	var bounds = [564234.25,2317503.0,564510.3125,2317932.25];

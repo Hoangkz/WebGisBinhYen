@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dữ liệu xã Cẩm Hoàng</title>
+  <title>Dữ liệu xã {{xa}}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -31,22 +31,23 @@
 
 </head>
 
-<body id="body" data-url="{{url}}" data-layer-DC="{{layerDC}}" data-layer-UB="{{layerUB}}" data-layer-GT="{{layerGT}}"data-geography="{{data_geography}}">
+<body id="body" data-zoom="{{zoom}}" data-center="{{center}}" data-url="{{url}}" data-layer-DC="{{layerDC}}" data-layer-UB="{{layerUB}}" data-layer-GT="{{layerGT}}"data-geography="{{data_geography}}">
 
   <div class="main">
     <header>{{headers}}</header>
     <div class="main-gis">
-      <div class="main__gis--left" style="max-width: 250px; justify-content: start;">
+      {{!-- <div class="main__gis--left" style="max-width: 250px; justify-content: start;">
         <form style="margin-right: 6px;max-width: 240px;">
-          <label for="inputsearch" style="margin-top: 8px;">Nhập mã hoặc tên chủ đất</label>
+          <label for="inputsearch" style="margin-top: 8px;">Nhập mã đất</label>
           <input id="inputsearch" class="form-control" style="margin-top: 2px;" type="text" size="30"
             onkeyup="showResult(this.value)" placeholder="Tìm kiếm" />
           <div id="livesearch"></div>
         </form>
-      </div>
+      </div> --}}
+      
       <div class="containerMap" style="flex: 3;width: 100%;position: relative;">
         <div class="map" id="map"></div>
-        <div class="main__gis--right" style="position: absolute;bottom: 0;">
+        <div class="main__gis--right" style="position: absolute;top: 504px;">
           <div class="line1">
             <h3>{{desc1}}</h3>
             <img
@@ -73,7 +74,6 @@
         </div>
 
       </div>
-
     </div>
   </div>
   <div class="ol-popup hide" id="popup">
@@ -113,12 +113,17 @@
     const data_geography = body.attr("data-geography")
     const data_geo = data_geography.split(",")
 
+    const data_center = body.attr("data-center")
+    const data_center2 = data_center.split(",")
+    const data_zoom = body.attr("data-zoom")
+    console.log(data_center2)
+
     var container = document.getElementById("popup");
     var content = document.getElementById("popup-content");
     var closer = document.getElementById("popup-closer");
     var shouldUpdate = true;
-    var center = [564350.04, 2317738.2];
-    var zoom = 17.4;
+    var center = [parseFloat(data_center2[0]),parseFloat(data_center2[1])];
+    var zoom = parseFloat(data_zoom);
     var rotation = 0;
 
     closer.onclick = function () {
@@ -335,9 +340,7 @@
         viewr.getProjection(),
         { INFO_FORMAT: "application/json", FEATURE_COUNT: 50 }
       );
-      console.log(viewr)
-      console.log(viewResolution)
-      console.log(url)
+  
       if (url) {
         $.ajax({
           type: "POST",
@@ -349,9 +352,8 @@
             console.log(data)
             if (data) {
               const content = `<p>
-                                  Mã vùng: ${data.txtmemo} </br> 
+                                  Mã vùng: ${data.htsdd} </br> 
                                   Diện tích: ${parseFloat(data.shape_area).toFixed(2)}m\u00B2 </br>
-                                  Chủ sở hữu: ${data.chusd}
                                 </p>`
 
               $("#popup-content").html(content);
@@ -440,7 +442,6 @@
               const content = `<p>
                                 Mã vùng: ${data.txtmemo} </br> 
                                 Diện tích: ${parseFloat(data.shape_area).toFixed(2)}m\u00B2 </br>
-                                Chủ sở hữu: ${data.chusd}
                               </p>`
 
               $("#popup-content").html(content);
